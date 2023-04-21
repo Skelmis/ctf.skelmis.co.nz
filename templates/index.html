@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+{% if flag_found %}
+<b>Nice! You found a flag, congrats!</b><br>
+{% endif %}
+You currently have {{ user_flags|length }} out of {{ total_flags }} flags.
+<br>
+The flags you have:<br>
+{% for flag in user_flags %}
+    <ul>{{ flag }}</ul>
+{% endfor %}
+<hr>
+Site routes:<br>
+<a href="/">Home</a><br>
+<a href="/login">Login</a><br>
+<a href="/session?redirect_to=/">Sessions</a>
+<hr>
+Session ID: {{ session_id }}<br>
+<a href="/session/clear">Reset session</a><br>
+<a href="/hints">See hints</a>
+</body>
+</html>
