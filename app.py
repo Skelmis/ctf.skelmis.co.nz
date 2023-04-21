@@ -1,4 +1,5 @@
 import functools
+import os
 import random
 import string
 from collections import defaultdict
@@ -6,7 +7,7 @@ from collections import defaultdict
 from flask import Flask, session, render_template, request, redirect
 
 app = Flask(__name__)
-app.secret_key = "ThisIsANotSoSecretKey"
+app.secret_key = os.environ.get("SECRET_KEY", "A_Not_So_Secret_key")
 app.data = defaultdict(lambda: {"flags": [], "used_hints": False})
 app.total_flags = 1
 # TODO Implement a leaderboard for the first to find each flag
