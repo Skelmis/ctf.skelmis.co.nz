@@ -2,7 +2,7 @@
 FROM python:3.10-slim-bullseye as common-base
 
 FROM common-base as builder
-RUN apt-get update && apt-get install -y build-essential python3-dev
+#RUN apt-get update && apt-get install -y build-essential python3-dev
 
 
 RUN mkdir -p /app
