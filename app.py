@@ -3,6 +3,8 @@ import os
 import random
 import string
 from collections import defaultdict
+import sqlite3
+from typing import Tuple
 
 from flask import Flask, session, render_template, request, redirect
 
@@ -18,8 +20,52 @@ app.total_flags = 1
 #      - Login form with creds in HTML
 
 
+def get_db_connection():
+    return sqlite3.connect("db/db.db")
+
+
+def get_user(session_id: str) -> Tuple[str, str, int]:
+    con = get_db_connection()
+    cursor = con.cursor()
+    res = cursor.execute("""SELECT * FROM User WHERE session_id = ?""", (session_id,))
+    try:
+        data = res.fetchone()
+    except TypeError:
+        # Doesn't exist for some reason
+        flags = ""
+        cursor.execute("""INSERT INTO User VALUES (?, ?, ?)""", (session_id, flags, 0))
+        con.commit()
+        data = (session_id, "", 0)
+    finally:
+        cursor.close()
+        con.close()
+        return data
+
+
+initial_con = get_db_connection()
+cur = initial_con.cursor()
+cur.execute(
+    "CREATE TABLE IF NOT EXISTS User(session_id TEXT PRIMARY KEY, flags TEXT NOT NULL, used_hints INTEGER)"
+)
+cur.close()
+initial_con.commit()
+initial_con.close()
+
+
 def register_flag_found(session_id: str, flag: str):
-    app.data[session_id]["flags"].append(flag)
+    con = get_db_connection()
+    cursor = con.cursor()
+    _, data, _ = get_user(session_id)
+
+    if flag not in data:
+        data += f",{flag}"
+        cursor.execute(
+            """UPDATE User SET flags = ? WHERE session_id = ?""",
+            (flag, session_id),
+        )
+        con.commit()
+    cursor.close()
+    con.close()
     return redirect("/?flag_found=true")
 
 
@@ -42,13 +88,14 @@ def require_session():
 def index():
     flag_found = request.args.get("flag_found", "false").lower() == "true"
 
+    _, flags, used_hints = get_user(session["id"])
     return render_template(
         "index.html",
         flag_found=flag_found,
         session_id=session["id"],
         total_flags=app.total_flags,
-        user_flags=app.data[session["id"]]["flags"],
-        has_used_hints=app.data[session["id"]]["used_hints"],
+        user_flags=flags.split(","),
+        has_used_hints=bool(used_hints),
     )
 
 
@@ -58,13 +105,19 @@ def get_session():
     if request.method != "POST":
         return render_template("session.html", redirect=redirect_url)
 
+    if not session.get("id"):
+        session_id = "".join(random.choices(string.ascii_letters + string.digits, k=6))
+        session["id"] = session_id
+
+        con = get_db_connection()
+        cursor = con.cursor()
+        cursor.execute("""INSERT INTO User VALUES (?, ?, ?)""", (session_id, "", 0))
+        con.commit()
+        cursor.close()
+        con.close()
+
     if redirect_url not in {"/"}:
         return register_flag_found(session["id"], "session_flag")
-
-    if not session.get("id"):
-        session["id"] = "".join(
-            random.choices(string.ascii_letters + string.digits, k=6)
-        )
 
     return redirect("/")
 
@@ -75,7 +128,14 @@ def clear_session():
     if request.method != "POST":
         return render_template("you_sure.html")
 
+    con = get_db_connection()
+    cursor = con.cursor()
+    cursor.execute("""DELETE FROM User WHERE session_id = ?""", (session["id"],))
+    con.commit()
+    cursor.close()
+    con.close()
     session.clear()
+
     return redirect("/")
 
 
@@ -85,6 +145,15 @@ def see_hints():
     if request.method != "POST":
         return render_template("you_sure.html")
 
+    con = get_db_connection()
+    cursor = con.cursor()
+    cursor.execute(
+        """UPDATE User SET used_hints = 1 WHERE session_id = ?""",
+        (session["id"],),
+    )
+    con.commit()
+    cursor.close()
+    con.close()
     app.data[session["id"]]["used_hints"] = True
     return render_template("hints.html")
 
@@ -104,7 +173,13 @@ def dashboard():
     if phrase != os.environ.get("DASH_PHRASE"):
         return render_template("dash_form.html")
 
-    return render_template("dash.html", data=app.data)
+    con = get_db_connection()
+    cursor = con.cursor()
+    res = cursor.execute("""SELECT * FROM User""")
+    data = res.fetchall()
+    cursor.close()
+    con.close()
+    return render_template("dash.html", data=data)
 
 
 if __name__ == "__main__":
