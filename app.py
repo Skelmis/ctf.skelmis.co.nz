@@ -96,5 +96,17 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/dash", methods=["GET", "POST"])
+def dashboard():
+    if request.method != "POST":
+        return render_template("dash_form.html")
+
+    phrase = request.form["phrase"]
+    if phrase != os.environ.get("DASH_PHRASE"):
+        return render_template("dash_form.html")
+
+    return render_template("dash.html", data=app.data)
+
+
 if __name__ == "__main__":
     app.run()
