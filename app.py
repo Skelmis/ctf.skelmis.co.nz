@@ -102,7 +102,7 @@ def index():
         flag_found=flag_found,
         session_id=session["id"],
         total_flags=app.total_flags,
-        user_flags=flags.split(","),
+        user_flags=[f for f in flags.split(",") if bool(f)],
         has_used_hints=bool(used_hints),
     )
 
