@@ -124,7 +124,7 @@ def get_session():
         cursor.close()
         con.close()
 
-    if redirect_url not in {"/"}:
+    if redirect_url not in {"/", "/login", "/dash", "/hints"}:
         return register_flag_found(session["id"], "session_flag")
 
     return redirect("/")
