@@ -5,7 +5,7 @@ loglevel = "info"
 
 accesslog = "-"
 errorlog = "-"
-access_log_format = '%(t)s %({X-Forwarded-For}i)s "%(r)s" %(s)s'
+access_log_format = '%(t)s %({X-Forwarded-For}i)s %(s)s "%(r)s"'
 
 proc_name = "ctf.skelmis.co.nz"
 
