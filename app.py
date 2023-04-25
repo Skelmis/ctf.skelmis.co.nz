@@ -36,6 +36,14 @@ def get_user(session_id: str) -> Tuple[str, str, int]:
         cursor.execute("""INSERT INTO User VALUES (?, ?, ?)""", (session_id, flags, 0))
         con.commit()
         data = (session_id, "", 0)
+    else:
+        if data is None:
+            flags = ""
+            cursor.execute(
+                """INSERT INTO User VALUES (?, ?, ?)""", (session_id, flags, 0)
+            )
+            con.commit()
+            data = (session_id, "", 0)
     finally:
         cursor.close()
         con.close()
