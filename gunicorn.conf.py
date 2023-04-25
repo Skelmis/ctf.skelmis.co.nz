@@ -5,6 +5,7 @@ loglevel = "info"
 
 accesslog = "-"
 errorlog = "-"
+access_log_format = '%(h) %(t) "%(r)"'
 
 proc_name = "ctf.skelmis.co.nz"
 
