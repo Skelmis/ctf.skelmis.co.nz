@@ -6,6 +6,7 @@ FROM common-base as builder
 
 
 RUN mkdir -p /app
+RUN mkdir -p /app/db
 
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-warn-script-location -r /app/requirements.txt
