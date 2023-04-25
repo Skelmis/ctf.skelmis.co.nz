@@ -19,8 +19,11 @@ app.total_flags = 1
 
 
 def register_flag_found(session_id: str, flag: str):
-    if not app.data[session_id]["used_hints"]:
-        app.data[session_id]["flags"].append(flag)
+    sesh = app.data[session_id]
+    if sesh["used_hints"] is False:
+        sesh["flags"].append(flag)
+
+    return redirect("/?flag_found=true")
 
 
 def require_session():
@@ -59,8 +62,7 @@ def get_session():
         return render_template("session.html", redirect=redirect_url)
 
     if redirect_url not in {"/"}:
-        register_flag_found(session["id"], "session_flag")
-        return redirect("/?flag_found=true")
+        return register_flag_found(session["id"], "session_flag")
 
     if not session.get("id"):
         session["id"] = "".join(
