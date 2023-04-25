@@ -19,10 +19,7 @@ app.total_flags = 1
 
 
 def register_flag_found(session_id: str, flag: str):
-    sesh = app.data[session_id]
-    if sesh["used_hints"] is False:
-        sesh["flags"].append(flag)
-
+    app.data[session_id]["flags"].append(flag)
     return redirect("/?flag_found=true")
 
 
