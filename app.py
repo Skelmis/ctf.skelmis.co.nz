@@ -39,7 +39,7 @@ def get_user(session_id: str) -> Tuple[str, str, int]:
     finally:
         cursor.close()
         con.close()
-        return data
+        return data  # noqa
 
 
 initial_con = get_db_connection()

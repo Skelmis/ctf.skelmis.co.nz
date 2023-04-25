@@ -3,10 +3,10 @@ import multiprocessing
 capture_output = True
 loglevel = "info"
 
-accesslog = "/var/log/gunicorn.access.log"
-errorlog = "/var/log/gunicorn.error.log"
+accesslog = "-"
+errorlog = "-"
 
-proc_name = "name here"
+proc_name = "ctf.skelmis.co.nz"
 
 worker_tmp_dir = "/dev/shm"
 
