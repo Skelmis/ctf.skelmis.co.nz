@@ -18,6 +18,9 @@ app.total_flags = 1
 #      - Change a request header?
 #      - Login form with weak creds such as admin admin
 #      - Login form with creds in HTML
+#      - Store the last session ID for hint checks
+#        but add a session bypass flag for resetting
+#        for doing it multiple times to bypass that check?
 
 
 def get_db_connection():
