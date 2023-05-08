@@ -14,6 +14,7 @@ app.data = defaultdict(lambda: {"flags": [], "used_hints": False})
 app.total_flags = 1
 # TODO Implement a leaderboard for the first to find each flag
 # TODO Flag ideas
+#      - Some badly encoded stuff like hex or what not
 #      - Cookie based flag that users modify for a request
 #      - Change a request header?
 #      - Login form with weak creds such as admin admin
