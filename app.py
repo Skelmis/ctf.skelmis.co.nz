@@ -19,6 +19,7 @@ app.total_flags = 1
 #      - Login form with weak creds such as admin admin
 #      - Login form with creds in HTML
 #      - IDOR
+#      - Login form with say admin=... In the url
 #      - Store the last session ID for hint checks
 #        but add a session bypass flag for resetting
 #        for doing it multiple times to bypass that check?
