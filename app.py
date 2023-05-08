@@ -24,6 +24,7 @@ app.total_flags = 1
 #      - Store the last session ID for hint checks
 #        but add a session bypass flag for resetting
 #        for doing it multiple times to bypass that check?
+#      - Directory traversal. Give em a file to find or something
 
 
 def get_db_connection():
